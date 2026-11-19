@@ -1,0 +1,15 @@
+[package]
+name = "common"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[features]
+default = []
+source = ["dep:serde"]
+encode = ["dep:bincode-next"]
+decode = ["dep:bincode-next"]
+
+[dependencies]
+bincode-next = { version = "3", optional = true }
+serde = { version = "1", features = ["derive"], optional = true }
