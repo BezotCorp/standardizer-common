@@ -9,6 +9,13 @@ pub struct Route {
 }
 
 impl Route {
+    pub fn validate(&self) -> Result<(), &'static str> {
+        if self.extensions.is_empty() || self.tools.is_empty() {
+            return Err("routing rules require extensions and tools");
+        }
+        Ok(())
+    }
+
     pub fn extensions(&self) -> &[String] {
         &self.extensions
     }
