@@ -187,18 +187,12 @@ importers:
       '@semantic-release/git':
         specifier: ^11.0.1
         version: 11.0.1(semantic-release@26.0.1(supports-color@7.2.0))(supports-color@7.2.0)
-      '@semantic-release/github':
-        specifier: ^12.0.11
-        version: 12.0.11(semantic-release@26.0.1(supports-color@7.2.0))(supports-color@7.2.0)
       '@semantic-release/release-notes-generator':
         specifier: ^14.1.1
         version: 14.1.1(semantic-release@26.0.1(supports-color@7.2.0))(supports-color@7.2.0)
       semantic-release:
         specifier: ^26.0.1
         version: 26.0.1(supports-color@7.2.0)
-      semantic-release-stop-before-publish:
-        specifier: ^2.0.0
-        version: 2.0.0(semantic-release@26.0.1(supports-color@7.2.0))
 
 packages:
 
@@ -317,9 +311,11 @@ packages:
     peerDependencies:
       semantic-release: '>=20.1.0'
 
-  '@semantic-release/core@1.0.0-beta.14':
-    resolution: {integrity: sha512-zKR/UHA7CL8hSapAHo98yXro9bX0T5XY5wtrZpJGZuS9bQP3bbejPO6nslMDyJVbz7IWf+ZElKLDDnVhI3UUfg==}
+  '@semantic-release/core@1.0.0-beta.15':
+    resolution: {integrity: sha512-s3vXgeHwJIneFW7vo5sIykxGMwlZ/Ow7JQj6oayP4qajDqpKdUi6oHziiss4DvOJae2uOZFZrai7JVe7mtnkYA==}
     engines: {node: '>=26.13'}
+    peerDependencies:
+      '@semantic-release/commit-analyzer': ^14.0.0-beta.4
 
   '@semantic-release/error@4.0.0':
     resolution: {integrity: sha512-mgdxrHTLOjOddRVYIYDo0fR3/v61GNN1YGkfbrjuIKg/uMgCd+Qzo3UAXJ+woLQQpos4pl5Esuw5A7AoNlzjUQ==}
@@ -1174,11 +1170,6 @@ packages:
   safe-buffer@5.1.2:
     resolution: {integrity: sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g==}
 
-  semantic-release-stop-before-publish@2.0.0:
-    resolution: {integrity: sha512-qd1KnHknZtp/1Z8C6fk7QigBC7jJo2MsCbzqFWerwwLYpUfZ/6dEZJJs5WWt8pXEi24J0ijZ4yCjV4m9BC/BRQ==}
-    peerDependencies:
-      semantic-release: '>=20'
-
   semantic-release@26.0.1:
     resolution: {integrity: sha512-nVDjgiPeiYuHtq4sjiJJVnq9i7zyXMFNGFL8MU0GWQLE0EPq98fTogh5RzHPvqxltnezmQ8QfiYZ100DFXyPQw==}
     engines: {node: '>=26.13'}
@@ -1603,7 +1594,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@semantic-release/core@1.0.0-beta.14(semantic-release@26.0.1(supports-color@7.2.0))(supports-color@7.2.0)':
+  '@semantic-release/core@1.0.0-beta.15(@semantic-release/commit-analyzer@14.0.0-beta.4(semantic-release@26.0.1(supports-color@7.2.0))(supports-color@7.2.0))(supports-color@7.2.0)':
     dependencies:
       '@semantic-release/commit-analyzer': 14.0.0-beta.4(semantic-release@26.0.1(supports-color@7.2.0))(supports-color@7.2.0)
       '@semantic-release/error': 4.0.0
@@ -1627,7 +1618,6 @@ snapshots:
       semver: 7.8.6
       signale: 1.4.0
     transitivePeerDependencies:
-      - semantic-release
       - supports-color
 
   '@semantic-release/error@4.0.0': {}
@@ -2426,14 +2416,10 @@ snapshots:
 
   safe-buffer@5.1.2: {}
 
-  semantic-release-stop-before-publish@2.0.0(semantic-release@26.0.1(supports-color@7.2.0)):
-    dependencies:
-      semantic-release: 26.0.1(supports-color@7.2.0)
-
   semantic-release@26.0.1(supports-color@7.2.0):
     dependencies:
       '@semantic-release/commit-analyzer': 14.0.0-beta.4(semantic-release@26.0.1(supports-color@7.2.0))(supports-color@7.2.0)
-      '@semantic-release/core': 1.0.0-beta.14(semantic-release@26.0.1(supports-color@7.2.0))(supports-color@7.2.0)
+      '@semantic-release/core': 1.0.0-beta.15(@semantic-release/commit-analyzer@14.0.0-beta.4(semantic-release@26.0.1(supports-color@7.2.0))(supports-color@7.2.0))(supports-color@7.2.0)
       '@semantic-release/github': 12.0.11(semantic-release@26.0.1(supports-color@7.2.0))(supports-color@7.2.0)
       '@semantic-release/npm': 14.0.0-beta.3(semantic-release@26.0.1(supports-color@7.2.0))
       '@semantic-release/release-notes-generator': 15.0.0-beta.4(semantic-release@26.0.1(supports-color@7.2.0))(supports-color@7.2.0)
