@@ -1,6 +1,5 @@
-import { writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 
-import changelog from "@semantic-release/changelog";
 import semanticRelease from "semantic-release";
 
 const expectedVersion = process.argv[2];
@@ -38,16 +37,19 @@ if (result.nextRelease.version !== expectedVersion) {
   );
 }
 
-await changelog.prepare(
-  {
-    changelogFile: "CHANGELOG.md",
-    changelogTitle: "# Changelog",
-  },
-  {
-    cwd: process.cwd(),
-    nextRelease: result.nextRelease,
-    logger: console,
-  },
+const notes = result.nextRelease.notes ?? "";
+const changelogTitle = "# Changelog";
+const changelog = await readFile("CHANGELOG.md", "utf8");
+
+if (!changelog.startsWith(changelogTitle)) {
+  throw new Error("CHANGELOG.md does not start with the expected title");
+}
+
+const currentContent = changelog.slice(changelogTitle.length).replace(/^\s*/, "");
+
+await writeFile(
+  "CHANGELOG.md",
+  `${changelogTitle}\n\n${notes.trim()}\n\n${currentContent}`,
 );
 
-await writeFile(notesFile, result.nextRelease.notes ?? "");
+await writeFile(notesFile, notes);

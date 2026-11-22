@@ -94,14 +94,11 @@ jobs:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
-          if ./scripts/run-semantic-release-version.sh "${{ inputs.version }}"; then
-            NEW_VERSION=$(./scripts/read-crate-version.sh standardizer-common)
-            echo "has_new_version=true" >> "$GITHUB_OUTPUT"
-            echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
-          else
-            echo "has_new_version=false" >> "$GITHUB_OUTPUT"
-            echo "new_version=" >> "$GITHUB_OUTPUT"
-          fi
+          ./scripts/run-semantic-release-version.sh "${{ inputs.version }}"
+
+          NEW_VERSION=$(./scripts/read-crate-version.sh standardizer-common)
+          echo "has_new_version=true" >> "$GITHUB_OUTPUT"
+          echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Open PR into main and wait for merge
         if: steps.run.outputs.has_new_version == 'true'
