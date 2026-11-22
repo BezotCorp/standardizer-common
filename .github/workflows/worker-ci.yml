@@ -20,7 +20,7 @@ jobs:
           components: clippy
 
       - name: Install Standardizer
-        run: cargo install standardizer --version 1.0.0 --locked
+        run: cargo install standardizer --version 1.0.1 --locked
 
       - name: Standardizer
         run: standardizer check
