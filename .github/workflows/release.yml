@@ -1,0 +1,170 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: release-main
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    name: Prepare release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Create release bot token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.BEZOTCORP_RELEASE_BOT_APP_ID }}
+          private-key: ${{ secrets.BEZOTCORP_RELEASE_BOT_PRIVATE_KEY }}
+
+      - name: Install semantic-release-cargo
+        shell: bash
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          SEMANTIC_RELEASE_CARGO_VERSION: v2.4.84
+          SEMANTIC_RELEASE_CARGO_ASSET: semantic-release-cargo-x86_64-unknown-linux-gnu
+        run: |
+          set -e
+
+          install_dir="$RUNNER_TEMP/semantic-release-cargo"
+          mkdir -p "$install_dir"
+
+          gh release download "$SEMANTIC_RELEASE_CARGO_VERSION" \
+            --repo semantic-release-cargo/semantic-release-cargo \
+            --pattern "$SEMANTIC_RELEASE_CARGO_ASSET" \
+            --pattern SHA256SUMS.txt \
+            --dir "$install_dir"
+
+          (
+            cd "$install_dir"
+            grep " \*\?$SEMANTIC_RELEASE_CARGO_ASSET$" SHA256SUMS.txt |
+              sha256sum --check -
+          )
+
+          mv \
+            "$install_dir/$SEMANTIC_RELEASE_CARGO_ASSET" \
+            "$install_dir/semantic-release-cargo"
+
+          chmod +x "$install_dir/semantic-release-cargo"
+          echo "$install_dir" >> "$GITHUB_PATH"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 12.21.0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 26.13.0
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Prepare release
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          BEZOTCORP_RELEASE_PHASE: prepare
+        run: pnpm run release
+
+      - name: Upload prepared release files
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-manifest
+          path: |
+            Cargo.toml
+            Cargo.lock
+            CHANGELOG.md
+          if-no-files-found: error
+          retention-days: 1
+
+  publish:
+    name: Publish release
+    needs: prepare
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+
+    steps:
+      - name: Create release bot token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.BEZOTCORP_RELEASE_BOT_APP_ID }}
+          private-key: ${{ secrets.BEZOTCORP_RELEASE_BOT_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 12.21.0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 26.13.0
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download prepared release files
+        uses: actions/download-artifact@v4
+        with:
+          name: release-manifest
+          path: .release-prepared
+
+      - name: Restore prepared release
+        shell: bash
+        run: |
+          set -e
+          cp .release-prepared/Cargo.toml Cargo.toml
+          cp .release-prepared/Cargo.lock Cargo.lock
+          cp .release-prepared/CHANGELOG.md CHANGELOG.md
+
+      - name: Verify package
+        run: cargo publish --dry-run --locked --allow-dirty
+
+      - name: Publish to crates.io and GitHub
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+          BEZOTCORP_RELEASE_PHASE: publish
+        run: |
+          set -e
+
+          export GIT_CONFIG_COUNT=1
+          export GIT_CONFIG_KEY_0=http.https://github.com/.extraheader
+          export GIT_CONFIG_VALUE_0="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w 0)"
+
+          pnpm run release
