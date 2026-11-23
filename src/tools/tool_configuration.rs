@@ -1,6 +1,4 @@
-use crate::{
-    tools::{Tool, ToolDefinition},
-};
+use crate::tools::{Tool, ToolDefinition};
 use std::collections::BTreeSet;
 
 #[derive(Clone, Debug)]
@@ -13,9 +11,7 @@ pub struct ToolConfiguration {
 
 impl ToolConfiguration {
     pub fn definition(&self, id: Tool) -> Option<&ToolDefinition> {
-        self.tools
-            .iter()
-            .find(|definition| definition.id() == id)
+        self.tools.iter().find(|definition| definition.id() == id)
     }
 
     pub fn tools(&self) -> &[ToolDefinition] {
@@ -27,12 +23,10 @@ impl ToolConfiguration {
 
         for definition in &self.tools {
             if !ids.insert(definition.id()) {
-                return Err(
-                    format!(
-                        "duplicate tool definition for {}",
-                        definition.id().name(),
-                    ),
-                );
+                return Err(format!(
+                    "duplicate tool definition for {}",
+                    definition.id().name(),
+                ));
             }
         }
 
