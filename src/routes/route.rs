@@ -1,4 +1,4 @@
-use crate::tool::Tool;
+use crate::tools::Tool;
 
 #[cfg_attr(feature = "source", derive(serde::Deserialize))]
 #[cfg_attr(feature = "encode", derive(bincode_next::Encode))]
