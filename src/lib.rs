@@ -1,2 +1,2 @@
-pub mod route;
-pub mod tool;
+pub mod routes;
+pub mod tools;
