@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.1.0](https://github.com/BezotCorp/standardizer-common/compare/2.0.0...2.1.0) (2026-11-23)
+
+### Features
+
+* centralize routing in common ([eb3359a](https://github.com/BezotCorp/standardizer-common/commit/eb3359adff001cfcae96ba55912c4f137cc040be))
+
 ## [2.0.0](https://github.com/BezotCorp/standardizer-common/compare/1.1.0...2.0.0) (2026-11-23)
 
 ### ⚠ BREAKING CHANGES
