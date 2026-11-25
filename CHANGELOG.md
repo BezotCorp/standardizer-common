@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.2.0](https://github.com/BezotCorp/standardizer-common/compare/2.1.0...2.2.0) (2026-11-25)
+
+### Features
+
+* add introspection system ([24c262f](https://github.com/BezotCorp/standardizer-common/commit/24c262f12c5dad0a30f768ceb44f951f107b2816))
+
 ## [2.1.0](https://github.com/BezotCorp/standardizer-common/compare/2.0.0...2.1.0) (2026-11-23)
 
 ### Features
