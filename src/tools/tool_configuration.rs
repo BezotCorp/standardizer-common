@@ -10,6 +10,38 @@ pub struct ToolConfiguration {
 }
 
 impl ToolConfiguration {
+    /// Deserializes and validates RON data.
+    #[cfg(feature = "source")]
+    pub fn from_ron(source: &str) -> Result<Self, Box<dyn std::error::Error>> {
+        let value: Self = ron::from_str(source)?;
+        value.validate()?;
+        Ok(value)
+    }
+
+    /// Validates and encodes data using the shared binary configuration.
+    #[cfg(feature = "encode")]
+    pub fn encode(&self) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
+        self.validate()?;
+        Ok(bincode_next::encode_to_vec(
+            self,
+            bincode_next::config::standard(),
+        )?)
+    }
+
+    /// Decodes and validates data, rejecting trailing bytes.
+    #[cfg(feature = "decode")]
+    pub fn decode(bytes: &[u8]) -> Result<Self, Box<dyn std::error::Error>> {
+        let (value, consumed): (Self, usize) =
+            bincode_next::decode_from_slice(bytes, bincode_next::config::standard())?;
+
+        if consumed != bytes.len() {
+            return Err("trailing data in binary input".into());
+        }
+
+        value.validate()?;
+        Ok(value)
+    }
+
     pub fn definition(&self, id: Tool) -> Option<&ToolDefinition> {
         self.tools.iter().find(|definition| definition.id() == id)
     }
