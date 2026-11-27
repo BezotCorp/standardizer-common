@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.3.0](https://github.com/BezotCorp/standardizer-common/compare/2.2.0...2.3.0) (2026-11-27)
+
+### Features
+
+* centralize data serialization and validation ([66b133a](https://github.com/BezotCorp/standardizer-common/commit/66b133a40e0d967152db9e679fb130d330d37442))
+
 ## [2.2.0](https://github.com/BezotCorp/standardizer-common/compare/2.1.0...2.2.0) (2026-11-25)
 
 ### Features
